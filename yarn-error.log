@@ -1,0 +1,68 @@
+Arguments: 
+  C:\Program Files\nodejs\node.exe C:\Users\Joe\AppData\Roaming\npm\node_modules\yarn\bin\yarn.js build
+
+PATH: 
+  C:\Python310\Scripts\;C:\Python310\;C:\FFmpeg\bin;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Python39\Scripts\;C:\Python39\;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C:\ProgramData\chocolatey\bin;C:\Program Files\Microsoft VS Code\bin;C:\ProgramData\ComposerSetup\bin;C:\Users\Joe\AppData\Local\Microsoft\WindowsApps;C:\Users\Joe\AppData\Roaming\npm;C:\Users\Joe\AppData\Roaming\Composer\vendor\bin;C:\Program Files\nodejs\;C:\Program Files\Git\cmd;C:\Program Files\dotnet\;C:\Program Files\Docker\Docker\resources\bin;C:\ProgramData\DockerDesktop\version-bin;C:\Program Files\PuTTY\;C:\Program Files\heroku\bin;C:\Users\Joe\AppData\Local\Pandoc\;C:\wamp64\bin\php\php7.4.26;C:\wamp64\bin\mysql\mysql5.7.36\bin;C:\Users\Joe\AppData\Local\GitHubDesktop\bin
+
+Yarn version: 
+  1.22.17
+
+Node version: 
+  16.13.1
+
+Platform: 
+  win32 x64
+
+Trace: 
+  SyntaxError: C:\Users\Joe\Documents\JoeDocs\dev\webvoice-vad\package.json: Unexpected token ] in JSON at position 202
+      at JSON.parse (<anonymous>)
+      at C:\Users\Joe\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:1625:59
+      at Generator.next (<anonymous>)
+      at step (C:\Users\Joe\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:310:30)
+      at C:\Users\Joe\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:321:13
+
+npm manifest: 
+  {
+      "name": "jsulmar/webvoice-vad",
+      "version": "0.0.1",
+      "description": "Node.js Voice Activity Detector",
+      "author": "Joe Sulmar",
+      "keywords": [
+          "voice-activity-detection",
+      ],
+      "main": "src/webvoicesdk.js",
+      "module": "src/webvoicesdk.js",
+      "browser": "dist/webVoiceSDK-linto.min.js",
+      "scripts": {
+          "build": "parcel build src/webvoicesdk.js --log-level 4 --no-cache --no-source-maps --detailed-report --out-file webVoiceSDK-linto.min.js",
+          "test": "parcel tests/with-bundler/index.html --out-dir dev-build --log-level 4 --no-cache"
+      },
+      "repository": {
+          "type": "git",
+          "url": "git+https://github.com/jsulmar/webvoice-vad.git"
+      },
+      "license": "AGPLV3",
+      "bugs": {
+          "url": "https://github.com/jsulmar/webvoice-vad/issues"
+      },
+      "homepage": "https://github.com/jsulmar/webvoice-vad#readme",
+      "devDependencies": {
+          "@tensorflow/tfjs": "^3.21.0",
+          "@tensorflow/tfjs-backend-cpu": "^3.21.0",
+          "@tensorflow/tfjs-backend-wasm": "^3.21.0",
+          "@tensorflow/tfjs-backend-webgl": "^3.21.0",
+          "parcel-bundler": "^1.12.5",
+          "parcel-plugin-tensorflowjs-blob": "^1.0.0",
+          "parcel-plugin-wasm-blob": "^1.0.0",
+          "parcel-plugin-worker-blob": "^1.0.0"
+      },
+      "browserslist": [
+          "since 2017-06"
+      ]
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
