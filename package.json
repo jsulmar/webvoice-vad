@@ -1,5 +1,5 @@
 {
-    "name": "@linto-ai/webvoicesdk",
+    "name": "webvoice-vad",
     "version": "1.2.5",
     "description": "Building blocks for voice-enabled applications in the browser",
     "author": "Damien Laine - LINAGORA",
@@ -19,9 +19,9 @@
     ],
     "main": "src/webvoicesdk.js",
     "module": "src/webvoicesdk.js",
-    "browser": "dist/webVoiceSDK-linto.min.js",
+    "browser": "dist/webvoice-vad.min.js",
     "scripts": {
-        "build": "parcel build src/webvoicesdk.js --log-level 4 --no-cache --no-source-maps --detailed-report --out-file webVoiceSDK-linto.min.js",
+        "build": "parcel build src/webvoicesdk.js --log-level 4 --no-cache --no-source-maps --detailed-report --out-file webvoice-vad.min.js",
         "test": "parcel tests/with-bundler/index.html --out-dir dev-build --log-level 4 --no-cache"
     },
     "repository": {
