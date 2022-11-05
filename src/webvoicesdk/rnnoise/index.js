@@ -95,7 +95,13 @@ export class Rnnoise {
      * @returns {void}
      */
     copyPCMSampleToWasmBuffer(pcmSample) {
-        this.wasmInterface.HEAPF32.set(pcmSample, this.wasmPcmInputF32Index);
+        const heap32 = this.wasmInterface?.HEAPF32;
+        if (typeof(heap32) === "object"){
+            this.wasmInterface.HEAPF32.set(pcmSample, this.wasmPcmInputF32Index);
+        } else {
+            console.log("copyPCMSampleToWasmBuffer anomaly, missing HEAPF32!")
+        }
+
     }
 
     /**

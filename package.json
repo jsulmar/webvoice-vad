@@ -1,6 +1,6 @@
 {
     "name": "webvoice-vad",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "description": "A Voice Activity Detector for Node.js",
     "author": "Joe Sulmar - jsulmar",
     "keywords": [

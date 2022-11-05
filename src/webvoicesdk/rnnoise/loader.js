@@ -133,6 +133,9 @@ var Module = (function () {
             Module["HEAPU32"] = HEAPU32 = new Uint32Array(buf);
             Module["HEAPF32"] = HEAPF32 = new Float32Array(buf);
             Module["HEAPF64"] = HEAPF64 = new Float64Array(buf);
+            if (typeof(buf) !== 'object' || typeof(HEAPF32) !== 'object'){
+                console.log("updateGlobalBufferAndViews buf, HEAPF32:", typeof(buf), typeof(HEAPF32))
+            }
         }
         var DYNAMIC_BASE = 5340496,
             DYNAMICTOP_PTR = 97456;
