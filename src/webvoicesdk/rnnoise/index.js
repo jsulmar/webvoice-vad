@@ -72,7 +72,12 @@ export class Rnnoise {
 
         this.convertTo16BitPCM(pcmFrame)
         this.copyPCMSampleToWasmBuffer(pcmFrame)
-        return this.wasmInterface._rnnoise_process_frame(this.context, this.wasmPcmOutput, this.wasmPcmInput)
+        if (!this.wasmInterface) {
+            console.log("calculateAudioFrameVAD wadmInterface:", this.wasmInterface)
+        }
+        return this.wasmInterface
+            ? this.wasmInterface._rnnoise_process_frame(this.context, this.wasmPcmOutput, this.wasmPcmInput)
+            : 0;
     }
 
     /**
