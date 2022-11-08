@@ -1,6 +1,6 @@
 /**
  * Src
- * generalizes Linto's original Mic class
+ * generalizes original Mic class from linto-ai/WebVoiceSDK
  * 
  * 1. accepts optional source input { stream, context, node }
  * 2. exposes audio sample sequence
@@ -11,66 +11,65 @@ import Node from './node.js'
 import NodeError from './error.js'
 
 export default class Src extends Node {
-    static defaults = {
-        source: null,   // optional { stream, context, node }
+    static defaultOptions = {
+        // optional source assets
+        source: {stream: null, context: null, node: null},
 
-        // used to create source if none is specified
-        micConstraints: {
-                echoCancellation: true,
-                autoGainControl: true,
-                noiseSuppression: true,
-                channelCount: 1,
-        },
-        processor: {
-            frameSize: 4096,
-        },
-
-        // optional sample handler callback
+        // optional handler exposes audio sample sequence
         onAudioFrame: () => {},
-    };
 
+        // these micOptions are ignored if source.stream is truthy
+        frameSize: 4096,
+        constraints: {
+            echoCancellation: true,
+            autoGainControl: true,
+            noiseSuppression: true,
+            channelCount: 1,
+        },
+    }
 
-    constructor(  ) {
+    constructor( options={}  ) {
         super()
+        this.options = {...Src.defaultOptions, ...options }
+
         this.hookableOnNodeTypes = [] //none, this node will connect to getUserMedia stream
         this.type = "mic"
         this.event = "srcFrame" //emitted
         this.hookedOn = null
      }
 
-
     async start( options = {}) {
-        this.options = {...Src.defaults, ...options }
-        
-        console.log(`Src framesize=${this.options.processor.frameSize}, constraints:`, this.options.micConstraints);
-        console.log("Src this.options:", this.options);
+        this.options = {...this.options, ...options }
 
         if (this.hookedOn) throw new NodeError(`Source is already started, call stop() first`)
 
         // if provided, apply specified source resources, otherwise create microphone based resources
-        const {stream, context, node} = this.options.source;
+        const {stream, context, node} = this.options.source; 
 
         this.stream = stream || await navigator.mediaDevices.getUserMedia({
-            audio: this.options.micConstraints,
+            audio: this.options.constraints,
             video: false,
         });
 
+        // use specified context, or create one if none was provided
         this.context = (stream && context) ? context : new (window.AudioContext || window.webkitAudioContext)();
+
+        // use specified source node, or create one if none was provided
         this.mediaStreamSource = (stream && context && node) ? node : this.context.createMediaStreamSource(this.stream);
 
         this.hookedOn = true
         this.sampleRate = this.context.sampleRate
-        this.srcFrameGenerator = this.context.createScriptProcessor(this.frameSize, 1, 1)
+        this.scriptProcessor = this.context.createScriptProcessor(this.frameSize, 1, 1)
         if (this.status == "non-emitting" && this.hookedOn) {
-            this.srcFrameGenerator.onaudioprocess = (audioFrame) => {
+            this.scriptProcessor.onaudioprocess = (audioFrame) => {
                 const srcFrame = audioFrame.inputBuffer.getChannelData(0)
                 this.dispatchEvent(new CustomEvent(this.event, {
                     "detail": srcFrame
                 }));
                 this.options.onAudioFrame(srcFrame);
             }
-            this.mediaStreamSource.connect(this.srcFrameGenerator)
-            this.srcFrameGenerator.connect(this.context.destination)
+            this.mediaStreamSource.connect(this.scriptProcessor)
+            this.scriptProcessor.connect(this.context.destination)
             this.status = "emitting"
         }
         return Promise.resolve()
@@ -78,15 +77,14 @@ export default class Src extends Node {
 
     resume() {
         super.resume()
-        this.mediaStreamSource.connect(this.srcFrameGenerator)
-        this.srcFrameGenerator.connect(this.context.destination)
+        this.mediaStreamSource.connect(this.scriptProcessor)
+        this.scriptProcessor.connect(this.context.destination)
     }
-
 
     pause() {
         super.pause()
         this.mediaStreamSource.disconnect()
-        this.srcFrameGenerator.disconnect()
+        this.scriptProcessor.disconnect()
     }
 
     stop() {
@@ -96,7 +94,7 @@ export default class Src extends Node {
             })
             this.pause()
             delete this.mediaStreamSource
-            delete this.srcFrameGenerator
+            delete this.scriptProcessor
             this.context.close().then(() => {
                 delete this.stream
                 delete this.context

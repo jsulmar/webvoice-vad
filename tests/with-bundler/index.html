@@ -91,7 +91,11 @@
         <button id="start">Start VAD</button>
         <button id="stop">Stop</button>
     </div>
-    <hr />
+    <div class="led-box">
+        <div id="VADLed" class="led-green" style="display: none;"></div>
+    </div>
+    <div id= "sample"></div>
+<hr />
     <div class="linto" id="LinTO">
         LinTO !
     </div>
@@ -101,10 +105,7 @@
     </div>
     <hr />
     <div>
-        <div class="led-box">
-            <div id="VADLed" class="led-green" style="display: none;"></div>
-        </div>
-        <label for="useVAD">Voice Activity Detection :</label>
+        <label for="useVAD">VAD options :</label>
         <textarea id="VAD" rows="10" cols="50"></textarea>
     </div>
 
