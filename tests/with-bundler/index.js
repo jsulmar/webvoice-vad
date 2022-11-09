@@ -1,51 +1,94 @@
+import { getSourceInputs } from '@tensorflow/tfjs-layers/dist/engine/topology.js';
 import webVoiceSDK from '../../src/webvoicesdk.js'
 
-
 const VADHandler = function (speakingEvent) {
-    speakingEvent.detail ? (document.getElementById("VADLed").classList.add("led-red"), document.getElementById("VADLed").classList.remove("led-green")) : (document.getElementById("VADLed").classList.add("led-green"), document.getElementById("VADLed").classList.remove("led-red"))
+    speakingEvent.detail ? (document.getElementById("LED-1").classList.add("led-red"), document.getElementById("LED-1").classList.remove("led-green")) : (document.getElementById("LED-1").classList.add("led-green"), document.getElementById("LED-1").classList.remove("led-red"))
 }
 
+// start processing microphone
 window.start = async function () {
-    const micOptions = JSON.parse(document.getElementById('mic').value);
-    window.mic = new webVoiceSDK.Mic({ ...micOptions, onAudioFrame: logFrameData });
-    window.vad = new webVoiceSDK.Vad(JSON.parse(document.getElementById('VAD').value));
-    await mic.start();
-    await vad.start(mic);
-    document.getElementById("VADLed").setAttribute('style', 'display:inline-block;');
+    const micOptions = JSON.parse(document.getElementById('mic-args').value);
+
+    window.src = useStream
+     ? new webVoiceSDK.Src({ source: getSource(micOptions), onAudioFrame: logFrameData,  })
+     : new webVoiceSDK.Mic({ ...micOptions, onAudioFrame: logFrameData });
+
+    window.vad = new webVoiceSDK.Vad(JSON.parse(document.getElementById('vad-args').value));
+
+    await src.start();
+    await vad.start(src);
+    document.getElementById("LED-1").setAttribute('style', 'display:inline-block;');
+    document.getElementById("sample").classList.remove("hidden-text");
+
     vad.addEventListener("speakingStatus", VADHandler);
+    streamOptionControlDisable(true);
 }
 
 window.stop = async function () {
     await window.vad.stop();
-    window.mic.stop();
-    document.getElementById("VADLed").setAttribute('style', 'display:none;');
+    window.src.stop();
+    document.getElementById("LED-1").setAttribute('style', 'display:none;');
+    document.getElementById("sample").classList.add("hidden-text");
     vad.removeEventListener("speakingStatus", VADHandler);
+    streamOptionControlDisable(false);
 }
 
-// HTML Interface
-document.getElementById('mic').value = JSON.stringify(webVoiceSDK.Mic.defaultOptions, false, 4);
-document.getElementById('VAD').value = JSON.stringify(webVoiceSDK.Vad.defaultOptions, false, 4);
-document.getElementById("start").onclick = async () => {
-    start();
+const streamOptionControlDisable = dis => {
+    document.getElementById('use-stream').disabled = dis;
+    dis
+        ? document.getElementById('use-stream-label').classList.add("disabled-text")
+        : document.getElementById('use-stream-label').classList.remove("disabled-text")
 }
-document.getElementById("stop").onclick = async () => {
-    stop();
+
+// Initialize default settings (textarea)
+document.getElementById('mic-args').value = JSON.stringify(webVoiceSDK.Mic.defaultOptions, false, 4);
+document.getElementById('vad-args').value = JSON.stringify(webVoiceSDK.Vad.defaultOptions, false, 4);
+
+// button handlers
+document.getElementById("start").onclick = async () => { start(); }
+document.getElementById("stop").onclick = async () => { stop(); }
+
+// manage useStream checkbox option
+window.useStream = false;
+const handleUseStreamChange = e => useStream = e.target.checked;
+window.streamCheckbox = document.getElementById("use-stream");
+streamCheckbox.addEventListener('change', handleUseStreamChange)
+
+
+// create optional source resources
+const getSource = async function(options){
+    let stream = null;
+    try{
+        stream =  await navigator.mediaDevices.getUserMedia({
+            audio: options.constraints,
+            video: false,
+        });
+    } catch (e) {
+        console.log("getUserMedia error:", e)
+    }
+
+    // optional assets:
+    const context =  stream ? new (window.AudioContext || window.webkitAudioContext)() : null;
+    const node = (stream && context) ? context.createMediaStreamSource(stream) : null;
+    return { stream, context, node }
+
 }
+
 
 // periodically log average frame data
 window.frameLogInterval = 0;
 window.frameSmoothedData = 0.0;
-function logFrameData( buff ){
+function logFrameData(buff) {
     var i;
     var sum = 0.0;
     for (i = 0; i < buff.length; ++i) {
         sum += buff[i] * buff[i];
     }
     window.frameSmoothedData = (0.95 * window.frameSmoothedData + 0.05 * sum);
-    if ( !(++window.frameLogInterval % 10) ) {
+    if (!(++window.frameLogInterval % 10)) {
         const sample = document.getElementById("sample");
-        sample.innerText = window.frameSmoothedData.toFixed(2); 
-        console.log( window.frameSmoothedData.toFixed(2));
+        sample.innerText = window.frameSmoothedData.toFixed(2);
+        console.log(window.frameSmoothedData.toFixed(2));
     }
 }
 

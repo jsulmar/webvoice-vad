@@ -75,7 +75,15 @@
             background-color: #ABFF00;
             border-radius: 50%;
             box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #304701 0 -1px 9px, #89FF00 0 2px 12px;
+
         }
+        .disabled-text {
+            opacity: .5;
+        }
+        .hidden-text {
+            opacity: 0;
+        }
+
     </style>
     <script src="index.js" defer></script>
 
@@ -83,30 +91,36 @@
 
 <body>
     <h1>webvoice-vad</h1>
-    <div class="linto" id="LinTO">
-        LinTO !
+    <hr />
+    <p>This is a functional subset derived from <a href="https://www.npmjs.com/package/@linto-ai/webvoicesdk" target="_blank">WebVoice SDK</a>, retaining only the voice activity detection (VAD) function. </p>
+    <p>Added capabilities include a) ability to accept a MediaStream input, and b) ability to observe audio sample sequence. </p>
+    <hr />
+    <div>
+        <div style="width: 100%; margin-top: 20; position: relative">
+            <div>
+                <button id="start">Start Mic.</button>
+                <button id="stop">Stop</button>
+            </div>
+            <div id="sample" style="margin: 0 10; margin-bottom: 20;"></div>
+            <div class="led-box" style="position: relative; top:5 ">
+                <div id="LED-1" class="led-green" style="display: none;"></div>
+            </div>
+
+        </div>
+        <div style="width: 100%; margin-top: 20; position: relative">
+            <input id="use-stream" type="checkbox" name="use-stream" value="use-stream">
+            <label id="use-stream-label" for="use-stream"> Use external stream</label><br>
+        </div>
     </div>
     <hr />
     <div>
-        <button id="start">Start VAD</button>
-        <button id="stop">Stop</button>
-    </div>
-    <div class="led-box">
-        <div id="VADLed" class="led-green" style="display: none;"></div>
-    </div>
-    <div id= "sample"></div>
-<hr />
-    <div class="linto" id="LinTO">
-        LinTO !
-    </div>
-    <div>
-        <label for="mic">Microphone options :</label>
-        <textarea id="mic" rows="10" cols="50"></textarea>
+        <label for="mic-args">Microphone options :</label>
+        <textarea id="mic-args" rows="10" cols="50"></textarea>
     </div>
     <hr />
     <div>
-        <label for="useVAD">VAD options :</label>
-        <textarea id="VAD" rows="10" cols="50"></textarea>
+        <label for="vad-args">VAD options :</label>
+        <textarea id="vad-args" rows="5" cols="50"></textarea>
     </div>
 
 

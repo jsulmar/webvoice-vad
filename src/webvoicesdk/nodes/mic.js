@@ -27,4 +27,4 @@ export default class Mic extends Src {
     stop() {
         super.stop();
     }
-}
+}Mic
