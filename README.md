@@ -1,6 +1,8 @@
 # webvoice-vad
 
-A Node.js voice activity detector extracted from linto-ai/WebVoiceSDK and modified to support MediaStreams other than local microphone.
+A Node.js voice activity detector. 
+
+Derived from <a href="https://www.npmjs.com/package/@linto-ai/webvoicesdk" target="_blank">WebVoice SDK</a> but retaining only the voice activity detection (VAD) function. Added capabilities include a) ability to accept a MediaStream input, and b) ability to observe audio sample sequence. 
 
 ## Functionalities 
 - Voice activity detection : Detect when someone's speaking (even at very low signal-to-noise ratio)
@@ -20,8 +22,12 @@ A Node.js voice activity detector extracted from linto-ai/WebVoiceSDK and modifi
 
 ## Usage
 
+```
 (TBD)
- 
+```
+
+
+
 ## License
 
 This library includes modified bits from :
