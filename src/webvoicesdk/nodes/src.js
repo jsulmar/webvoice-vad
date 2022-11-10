@@ -41,7 +41,6 @@ export default class Src extends Node {
 
     async start(options = {}) {
         if (!this?.hookedOn) {
-            console.log("Src start:", this.hookedOn);
             this.options = { ...this.options, ...options }
 
             if (this.hookedOn) throw new NodeError(`Source is already started, call stop() first`)
@@ -55,7 +54,15 @@ export default class Src extends Node {
             });
 
             // use specified context, or create one if none was provided
-            this.context = (stream && context) ? context : new (window.AudioContext || window.webkitAudioContext)();
+            if (stream && context) {
+                // use external context
+                this.context = context;
+            } else {
+                // create an internal context
+                this.context = new (window.AudioContext || window.webkitAudioContext)();
+                this.localContext = this.context;
+            }
+           
 
             // use specified source node, or create one if none was provided
             this.mediaStreamSource = (stream && context && node) ? node : this.context.createMediaStreamSource(this.stream);
@@ -92,7 +99,7 @@ export default class Src extends Node {
         this.scriptProcessor.disconnect()
     }
 
-    stop() {
+    async stop() {
         if (this.hookedOn) {
             this.stream.getTracks().map((track) => {
                 return track.readyState === 'live' && track.kind === 'audio' ? track.stop() : false
@@ -100,10 +107,15 @@ export default class Src extends Node {
             this.pause()
             delete this.mediaStreamSource
             delete this.scriptProcessor
-            this.context.close().then(() => {
-                delete this.stream
-                delete this.context
-            })
+
+            // only close context if it was created here
+            if (this?.localContext ){
+                console.log("Src closing local context.")
+                await this.localContext.close();
+                delete this.localContext;
+            }
+            delete this.stream
+            delete this.context
             this.hookedOn = null
         }
     }

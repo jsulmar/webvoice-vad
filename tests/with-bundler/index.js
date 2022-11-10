@@ -9,10 +9,12 @@ const VADHandler = function (speakingEvent) {
 window.start = async function () {
     const micOptions = JSON.parse(document.getElementById('mic-args').value);
 
-    window.src = useStream
-     ? new webVoiceSDK.Src({ source: getSource(micOptions), onAudioFrame: logFrameData,  })
-     : new webVoiceSDK.Mic({ ...micOptions, onAudioFrame: logFrameData });
-
+    if (useStream){
+        const source = await getSource(micOptions);
+        window.src = new webVoiceSDK.Src({ source, onAudioFrame: logFrameData,  })
+    } else {
+        window.src = new webVoiceSDK.Mic({ ...micOptions, onAudioFrame: logFrameData });
+    }
     window.vad = new webVoiceSDK.Vad(JSON.parse(document.getElementById('vad-args').value));
 
     await src.start();
