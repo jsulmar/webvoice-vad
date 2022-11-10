@@ -1,4 +1,3 @@
-import { getSourceInputs } from '@tensorflow/tfjs-layers/dist/engine/topology.js';
 import webVoiceSDK from '../../src/webvoicesdk.js'
 
 const VADHandler = function (speakingEvent) {

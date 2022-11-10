@@ -24,14 +24,31 @@ Derived from <a href="https://www.npmjs.com/package/@linto-ai/webvoicesdk" targe
 
 ```
 (TBD)
+import { Mic, Src, Vad } from 'webvoice-vad';
+
+const mic = new Mic();
+const vad = new Vad();
+const handleVadEvent = e => console.log(e.detail);
+
+const start = async () => {
+    await mic.start();
+    await vad.start(mic);
+    vad.addEventListener("speakingStatus", handleVadEvent );
+}
+
+const stop = async () => {
+    vad.removeEventListener("speakingStatus", handleVadEvent);
+    await vad.stop();
+    await mic.stop();
+}
+
+
 ```
 
 
 
 ## License
-
-This library includes modified bits from :
-- [Meyda](https://github.com/meyda/meyda) MIT Licence
-- [FFTjs](https://github.com/nevosegal/fftjs) MIT Licence
-- [node-dct](https://github.com/vail-systems/node-dct) MIT Licence
-- [Jitsi](https://github.com/jitsi/jitsi-meet) Apache License 2.0
+* MIT License
+* This library includes modified bits from :
+  * [Jitsi](https://github.com/jitsi/jitsi-meet) Apache License 2.0
+  * WebVoiceSDK (https://www.npmjs.com/package/@linto-ai/webvoicesdk)
