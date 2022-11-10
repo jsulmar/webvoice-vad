@@ -18,13 +18,12 @@ Derived from <a href="https://www.npmjs.com/package/@linto-ai/webvoicesdk" targe
 - Wide cross-platform compatibility for modern-browsers, O/S, and devices.
 - Can process RTCPeerConnection remote streams.
 
-(TBD)
-
 ## Usage
 
+Using microphone input:
+
 ```
-(TBD)
-import { Mic, Src, Vad } from 'webvoice-vad';
+import { Mic, Vad } from 'webvoice-vad';
 
 const mic = new Mic();
 const vad = new Vad();
@@ -41,9 +40,34 @@ const stop = async () => {
     await vad.stop();
     await mic.stop();
 }
+```
 
+Using stream input:
 
 ```
+import { Src, Vad } from 'webvoice-vad';
+
+const getStream = async () => 
+	await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+
+const src = new Src({ source: {stream: getStream() }, onAudioFrame: buff => { /*process buff*/ })
+const vad = new Vad();
+const handleVadEvent = e => console.log(e.detail);
+
+const start = async () => {
+    await src.start();
+    await vad.start(mic);
+    vad.addEventListener("speakingStatus", handleVadEvent );
+}
+
+const stop = async () => {
+    vad.removeEventListener("speakingStatus", handleVadEvent);
+    await vad.stop();
+    await src.stop();
+}
+```
+
+
 
 
 

@@ -104,7 +104,7 @@ export class Rnnoise {
         if (typeof(heap32) === "object"){
             this.wasmInterface.HEAPF32.set(pcmSample, this.wasmPcmInputF32Index);
         } else {
-            console.log("copyPCMSampleToWasmBuffer anomaly, missing HEAPF32!")
+            //console.log("copyPCMSampleToWasmBuffer anomaly, missing HEAPF32!")
         }
 
     }

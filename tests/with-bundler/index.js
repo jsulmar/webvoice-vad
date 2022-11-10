@@ -80,12 +80,8 @@ const getSource = async function(options){
 window.frameLogInterval = 0;
 window.frameSmoothedData = 0.0;
 function logFrameData(buff) {
-    var i;
-    var sum = 0.0;
-    for (i = 0; i < buff.length; ++i) {
-        sum += buff[i] * buff[i];
-    }
-    window.frameSmoothedData = (0.95 * window.frameSmoothedData + 0.05 * sum);
+    const sumSq = buff.reduce((acc, d) => acc + d*d, 0.0);
+    window.frameSmoothedData = (0.95 * window.frameSmoothedData + 0.05 * sumSq);
     if (!(++window.frameLogInterval % 10)) {
         const sample = document.getElementById("sample");
         sample.innerText = window.frameSmoothedData.toFixed(2);
