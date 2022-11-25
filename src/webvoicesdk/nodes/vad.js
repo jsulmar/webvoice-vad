@@ -4,11 +4,17 @@ import {
     Rnnoise
 } from '../rnnoise/index.js'
 
-
-// development state variables
+// diagnostic logging state variables
 let loopCnt = 0;
 let t0 = 0;
 let t1 = 0;
+
+const dlogEvent = speaking => {
+    // report ms since last event
+    t1 = new Date();
+    console.log(`------------> event ${speaking} (elapsed ${t1 - t0})`)
+    t0 = t1
+}
 
 const handler = function (nodeEvent) {
     // Prepend the residue PCM buffer from the previous process callback
@@ -20,7 +26,7 @@ const handler = function (nodeEvent) {
         const vadScore = this.wasmRuntime.calculateAudioFrameVAD(pcmSample)
         if (this.activations.length == this.options.numActivations) this.activations.shift()
         this.activations.push(0 + (vadScore > this.options.threshold))
-        !(loopCnt++ % 10 )&& console.log("vadScore:", vadScore.toFixed(3));
+        this.options.dlog && !(loopCnt++ % 10) && console.log("vadScore:", vadScore.toFixed(3));
         let activations = this.activations.reduce((accum, val) => accum + val)
         // @TODO : Rework this shitty hysteresis (ashamed i am)
         if (vadScore >= this.options.threshold && this.redemptionTimer) {
@@ -31,10 +37,7 @@ const handler = function (nodeEvent) {
             this.redemptionTimer = setTimeout(() => {
                 if (this.wasmRuntime) {
                     this.speaking = false;
-                    // report ms since last event
-                    t1= new Date();
-                    console.log(`------------> dispatch false (${t1-t0})`)
-                    t0 = t1
+                    this.options.dlog && dlogEvent(this.speaking);
                     this.dispatchEvent(new CustomEvent(this.event, {
                         "detail": false
                     }))
@@ -43,10 +46,7 @@ const handler = function (nodeEvent) {
         }
         if ((activations >= this.options.numActivations) && !this.speaking) {
             this.speaking = true
-                    // report ms since last event
-                    t1= new Date();
-                    console.log(`------------> dispatch true (${t1-t0})`)
-                    t0 = t1
+            this.options.dlog && dlogEvent(this.speaking);
             this.dispatchEvent(new CustomEvent(this.event, {
                 "detail": true
             }))
@@ -59,13 +59,15 @@ export default class Vad extends Node {
     static defaultOptions = {
         numActivations: 10,
         threshold: 0.85,
-        timeAfterStop: 800
+        timeAfterStop: 800,
+        dlog: false
     }
 
     constructor({
         numActivations = 10,
         threshold = 0.85,
-        timeAfterStop = 800
+        timeAfterStop = 800,
+        dlog = false
     } = {}) {
         super()
         this.handler = handler.bind(this)
@@ -75,7 +77,8 @@ export default class Vad extends Node {
         this.options = {
             numActivations,
             threshold,
-            timeAfterStop
+            timeAfterStop,
+            dlog
         }
     }
 
