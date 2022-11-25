@@ -4,6 +4,7 @@ import {
     Rnnoise
 } from '../rnnoise/index.js'
 
+let loopCnt = 0;
 
 const handler = function (nodeEvent) {
     // Prepend the residue PCM buffer from the previous process callback
@@ -15,6 +16,7 @@ const handler = function (nodeEvent) {
         const vadScore = this.wasmRuntime.calculateAudioFrameVAD(pcmSample)
         if (this.activations.length == this.options.numActivations) this.activations.shift()
         this.activations.push(0 + (vadScore > this.options.threshold))
+        !(loopCnt++ % 10 )&& console.log("vadScore:", vadScore.toFixed(3));
         let activations = this.activations.reduce((accum, val) => accum + val)
         // @TODO : Rework this shitty hysteresis (ashamed i am)
         if (vadScore >= this.options.threshold && this.redemptionTimer) {
@@ -25,6 +27,7 @@ const handler = function (nodeEvent) {
             this.redemptionTimer = setTimeout(() => {
                 if (this.wasmRuntime) {
                     this.speaking = false
+                    console.log("------------> dispatch false.")
                     this.dispatchEvent(new CustomEvent(this.event, {
                         "detail": false
                     }))
@@ -33,6 +36,7 @@ const handler = function (nodeEvent) {
         }
         if ((activations >= this.options.numActivations) && !this.speaking) {
             this.speaking = true
+            console.log("------------> dispatch true.")
             this.dispatchEvent(new CustomEvent(this.event, {
                 "detail": true
             }))

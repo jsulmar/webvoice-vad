@@ -1,10 +1,11 @@
 {
     "name": "webvoice-vad",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "description": "A Voice Activity Detector for Node.js",
-    "author": "Joe Sulmar - jsulmar",
+    "author": "Joe Sulmar <joes@hotlynx.com> (https://hotlynx.com) ",
     "keywords": [
-        "voice-activity-detection"
+        "voice-activity-detection",
+        "vad"
     ],
     "main": "src/webvoicesdk.js",
     "module": "src/webvoicesdk.js",
@@ -17,7 +18,7 @@
         "type": "git",
         "url": "git+https://github.com/jsulmar/webvoice-vad.git"
     },
-    "license": "",
+    "license": "MIT",
     "bugs": {
         "url": "https://github.com/jsulmar/webvoice-vad/issues"
     },

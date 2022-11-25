@@ -85,7 +85,6 @@ function logFrameData(buff) {
     if (!(++window.frameLogInterval % 10)) {
         const sample = document.getElementById("sample");
         sample.innerText = window.frameSmoothedData.toFixed(2);
-        console.log(window.frameSmoothedData.toFixed(2));
     }
 }
 
