@@ -4,7 +4,11 @@ import {
     Rnnoise
 } from '../rnnoise/index.js'
 
+
+// development state variables
 let loopCnt = 0;
+let t0 = 0;
+let t1 = 0;
 
 const handler = function (nodeEvent) {
     // Prepend the residue PCM buffer from the previous process callback
@@ -26,8 +30,11 @@ const handler = function (nodeEvent) {
         if ((vadScore < this.options.threshold) && !this.redemptionTimer && this.speaking) {
             this.redemptionTimer = setTimeout(() => {
                 if (this.wasmRuntime) {
-                    this.speaking = false
-                    console.log("------------> dispatch false.")
+                    this.speaking = false;
+                    // report ms since last event
+                    t1= new Date();
+                    console.log(`------------> dispatch false (${t1-t0})`)
+                    t0 = t1
                     this.dispatchEvent(new CustomEvent(this.event, {
                         "detail": false
                     }))
@@ -36,7 +43,10 @@ const handler = function (nodeEvent) {
         }
         if ((activations >= this.options.numActivations) && !this.speaking) {
             this.speaking = true
-            console.log("------------> dispatch true.")
+                    // report ms since last event
+                    t1= new Date();
+                    console.log(`------------> dispatch true (${t1-t0})`)
+                    t0 = t1
             this.dispatchEvent(new CustomEvent(this.event, {
                 "detail": true
             }))
