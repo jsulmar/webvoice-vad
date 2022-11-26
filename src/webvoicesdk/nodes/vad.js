@@ -26,7 +26,7 @@ const handler = function (nodeEvent) {
         const vadScore = this.wasmRuntime.calculateAudioFrameVAD(pcmSample)
         if (this.activations.length == this.options.numActivations) this.activations.shift()
         this.activations.push(0 + (vadScore > this.options.threshold))
-        //this.options.dlog && !(loopCnt++ % 10) && console.log("vadScore:", vadScore.toFixed(3));
+        this.options.dlog && !(loopCnt++ % 10) && console.log("vadScore:", vadScore.toFixed(3));
         let activations = this.activations.reduce((accum, val) => accum + val)
         // @TODO : Rework this shitty hysteresis (ashamed i am)
         if (vadScore >= this.options.threshold && this.redemptionTimer) {
@@ -80,6 +80,7 @@ export default class Vad extends Node {
             timeAfterStop,
             dlog
         }
+        this.options.dlog && console.log("vad options::", this.options);
     }
 
     start(node) {
