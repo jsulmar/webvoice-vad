@@ -69,7 +69,6 @@ export default class Vad extends Node {
         timeAfterStop = 800,
         dlog = false
     } = {}) {
-        console.log(`vad constructor dlog arg=${dlog}`)
         super()
         this.handler = handler.bind(this)
         this.type = "vad"
